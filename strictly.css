@@ -1,0 +1,15 @@
+.strictly-validation-error {
+	border: 1px solid #FF0000;
+}
+
+.strictly-validation-success {
+	border: 1px solid #00FF00;
+}
+
+.strictly-error-message {
+    font-size: 12px;
+    color: #FF0000;
+    font-weight: 500;
+    text-transform: capitalize;
+    margin: 4px 0;
+}

@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>Strictly.js: Client-Side Form Validation Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="strictly.css">
+</head>
+<body>
+<div class="container">
+    <h2>StrictlyJS Validation Form</h2>
+    
+    <div class="wrap mt-4 col-md-6">
+        <h3>Basic Inputs</h3>
+        <div class="mb-3">
+            <label for="field-1" class="form-label">Field 1</label>
+            <input type="text" id="field-1" name="field1" class="form-control" data-strictly-maxlength="4" required>
+        </div>
+        <div class="mb-3">
+            <label for="field-2" class="form-label">Field 2</label>
+            <input type="text" id="field-2" name="field2" class="form-control" data-strictly-type="url" required>
+        </div>
+        <button id="subb" class="btn btn-primary">Validate</button>
+    </div>
+    
+    <div class="mt-4 col-md-6">
+    	<h3>Direct Inputs</h3>
+    	<div class="mb-3">
+            <label for="outerf1" class="form-label">Outer Field 1 - </label>
+            <input id="outerf1" type="text" name="outerf1" class="form-control outer" minlength="3" data-strictly-maxlength="8" required>
+        </div>
+        <div class="mb-3">
+            <label for="outerf2" class="form-label">Outer Field 2</label>
+            <input id="outerf2" type="text" name="outerf2" class="form-control outer" minlength="3" data-strictly-maxlength="8">
+        </div>
+    </div>
+    
+    <form class="form-container mt-4 col-md-6 form">
+        <h3>Form Fields</h3>
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input id="name" type="text" name="name" class="form-control" minlength="3" data-strictly-maxlength="8" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="namenr" class="form-label">Name (Not Required)</label>
+            <input id="namenr" type="text" name="namenr" class="form-control" data-strictly-required="false">
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input id="email" type="email" class="form-control" data-strictly-maxlength="10" name="email" required>
+        </div>
+        
+        <h4>Number & Digits Validation</h4>
+        <div class="mb-3">
+            <label for="number" class="form-label">Number</label>
+            <input id="number" type="text" class="form-control" data-strictly-type="number" name="number" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="integer" class="form-label">Integer</label>
+            <input id="integer" type="text" class="form-control" data-strictly-type="integer" name="integer" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="digits" class="form-label">Digits</label>
+            <input id="digits" type="text" class="form-control" data-strictly-type="digits" name="digits" required>
+        </div>
+        
+        <h4>Alphanumeric Validation</h4>
+        <div class="mb-3">
+            <label for="alphanum" class="form-label">Alphanumeric</label>
+            <input id="alphanum" type="text" class="form-control" data-strictly-type="alphanum" name="alphanum" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="alphanumspace" class="form-label">Alphanumeric with Spaces</label>
+            <input id="alphanumspace" type="text" class="form-control" data-strictly-type="alphanumspace" name="alphanumspace" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="alphanumstrict" class="form-label">Alphanumeric Strict</label>
+            <input id="alphanumstrict" type="text" class="form-control" data-strictly-type="alphanumstrict" name="alphanumstrict" required>
+        </div>
+
+        <h4>URL</h4>
+        <div class="mb-3">
+            <label for="url" class="form-label">URL</label>
+            <input id="url" type="text" class="form-control" data-strictly-type="url" name="url" required>
+        </div>
+        
+        <h4>Date & Time</h4>
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input id="date" type="date" class="form-control" name="date" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="time" class="form-label">Time</label>
+            <input id="time" type="time" class="form-control" name="time" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="datetime" class="form-label">Date Time</label>
+            <input id="datetime" type='text' class="form-control" data-strictly-datetime="DD-MM-YYYY HH:mm" name='datetime' required>
+        </div>
+        
+        <h4>Password Validation</h4>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input id="password" type="password" class="form-control" data-strictly-password="alpha:caps,alpha:small,num,special:min=1,min=6,max=8" name="password" required>
+        </div>
+
+        <h4>Length, Range, Word</h4>
+        <div class="mb-3">
+            <label for="length" class="form-label">length</label>
+            <input id="length" type="text" class="form-control" data-strictly-length="[3,8]" name="length" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="range" class="form-label">Range</label>
+            <input id="range" type="text" class="form-control" data-strictly-range="[3,8]" name="range" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="word" class="form-label">Word</label>
+            <input id="word" type="text" class="form-control" data-strictly-words="[3,8]" name="word" required>
+        </div>
+
+        <div>
+	    	<label for="characters">characters</label>
+	    	<input id="characters" name="characters" class="form-control" data-strictly-characters="[5,8]" required>
+    	</div>
+
+        <h4>Pattern</h4>
+        <div class="mb-3">
+            <label for="pattern" class="form-label">Pattern</label>
+            <input id="pattern" type="text" class="form-control" data-strictly-pattern="^[A-Z][0-9][A-Z0-9]{0,3}$" name="pattern" required>
+        </div>
+        
+        <h4>Checkbox Validation</h4>
+        <div class="mb-3">
+            <label for="mincheck" class="form-label">Minimum 2 Checkboxes</label>
+            <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required>
+            <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required>
+            <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required>
+        </div>
+        
+        <h4>Select Validation</h4>
+        <div class="mb-3">
+            <label for="select" class="form-label">Select Multiple (2-3)</label>
+            <select name="select" class="form-control" data-strictly-select="[2,3]" multiple required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </div>
+
+        <h4>Node & Equal to</h4>
+        <div class="mb-3">
+            <label for="node" class="form-label">Node</label>
+            <input id="node" type="text" class="form-control" data-strictly-maxcharacters="8" name="node" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="equalto" class="form-label">Equal To</label>
+            <input id="equalto" type="text" class="form-control" data-strictly-equalto="#node" name="equalto" required>
+        </div>
+        
+        <button class="btn btn-success">Submit</button>
+    </form>
+</div>
+
+</body>
+<script type="text/javascript" src="strictly.js"></script>
+<script type='text/javascript'>
+	// document.getElementById('name').focus();
+
+	var c = new Strictly('.form', {
+		restrict: 'showerror',
+		errorMessagePosition: 'up',
+		errorCustomClass: 'checking',
+		errorTag: 'div',
+		// initError: false
+	});
+
+	let outer = new Strictly('.outer', {restrict: 'oninput'});
+	console.log(outer);
+	
+	let validVar = new Strictly('.wrap');
+	document.querySelector('#subb').addEventListener('click', (e) => {
+		var d = validVar.validate({formError: true});
+		console.log(d);
+	});
+
+	// setTimeout(() => {
+	//     // Select the .form container
+	// 	const formContainer = document.querySelector('.form');
+
+	// 	// Create a new input element
+	// 	const newInput = document.createElement('input');
+
+	// 	// Set attributes for the input element
+	// 	newInput.type = 'text';
+	// 	newInput.name = 'dynamicInput';
+	// 	newInput.placeholder = 'Enter text here...';
+	// 	newInput.setAttribute("maxlength", "6");
+	// 	newInput.required = true;
+
+	// 	// Append the new input to the .form container
+	// 	formContainer.appendChild(newInput);
+	// }, 2000);
+</script>
+</html>
