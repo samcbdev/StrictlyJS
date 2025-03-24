@@ -51,12 +51,20 @@ preferably before the closing **`</body>`** tag:
 
 ```html 
 <script src="https://cdn.jsdelivr.net/gh/samcbdev/StrictlyJS/strictly.js"></script>
+
+or 
+
+<script src="https://cdn.jsdelivr.net/npm/strictlyjs/strictly.js"></script>
 ```
 
 Or 
 
 ```html 
 <script src="https://cdn.jsdelivr.net/gh/samcbdev/StrictlyJS/strictly.min.js"></script>
+
+or 
+
+<script src="https://cdn.jsdelivr.net/npm/strictlyjs/strictly.min.js"></script>
 ```
 
 ## **Initializing Strictly.Js**

@@ -1,0 +1,32 @@
+{
+  "name": "strictlyjs",
+  "version": "1.0.0",
+  "description": "Strictly.js is a lightweight JavaScript library designed to simplify",
+  "main": "strictly.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samcbdev/StrictlyJS.git"
+  },
+  "keywords": [
+    "javascript",
+    "form",
+    "validator",
+    "light",
+    "weight",
+    "form",
+    "validator",
+    "realtime",
+    "javascript",
+    "form",
+    "validator"
+  ],
+  "author": "Samcbdev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samcbdev/StrictlyJS/issues"
+  },
+  "homepage": "https://github.com/samcbdev/StrictlyJS#readme"
+}
