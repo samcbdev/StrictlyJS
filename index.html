@@ -1,220 +1,524 @@
-
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
-    <title>Strictly.js: Client-Side Form Validation Library</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrictlyJS: Comprehensive Examples</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="strictly.css">
+    <link rel="stylesheet" href="strictly.css">
+    <style>
+        .example-section { margin-bottom: 2em; padding: 1em; border: 1px solid #ccc; border-radius: 6px; }
+        .strictly-validation-error { border: 1px solid #e74c3c; }
+        .strictly-validation-success { border: 1px solid #2ecc71; }
+        .strictly-error-message.filled { color: #e74c3c; font-size: 0.95em; margin: 0.25em 0 0 0; }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h2>StrictlyJS Validation Form</h2>
-    
-    <div class="wrap mt-4 col-md-6">
-        <h3>Basic Inputs</h3>
-        <div class="mb-3">
-            <label for="field-1" class="form-label">Field 1</label>
-            <input type="text" id="field-1" name="field1" class="form-control" data-strictly-maxlength="4" required>
-        </div>
-        <div class="mb-3">
-            <label for="field-2" class="form-label">Field 2</label>
-            <input type="text" id="field-2" name="field2" class="form-control" data-strictly-type="url" required>
-        </div>
-        <button id="subb" class="btn btn-primary">Validate</button>
+    <h1 class="mt-4 mb-4">StrictlyJS: Comprehensive Example Gallery</h1>
+
+    <!-- Example 1: Basic Inputs -->
+    <div class="example-section">
+        <h2 class="h4">Example 1: Basic Inputs</h2>
+        <form id="form-basic" class="mb-3">
+            <div class="mb-3">
+                <label for="field-1" class="form-label">Field 1 (max 4 chars, required)</label>
+                <input type="text" id="field-1" name="field1" class="form-control" data-strictly-maxlength="4" required>
+            </div>
+            <div class="mb-3">
+                <label for="field-2" class="form-label">Field 2 (URL, required)</label>
+                <input type="text" id="field-2" name="field2" class="form-control" data-strictly-type="url" required>
+            </div>
+            <div class="mb-3">
+                <button id="subb" type="button" class="btn btn-primary">Validate</button>
+            </div>
+            <div id="basic-errors" class="alert alert-warning d-none"></div>
+        </form>
+        <p><em>Demonstrates basic field validation and API usage.</em></p>
     </div>
-    
-    <div class="mt-4 col-md-6">
-    	<h3>Direct Inputs</h3>
-    	<div class="mb-3">
-            <label for="outerf1" class="form-label">Outer Field 1 - </label>
-            <input id="outerf1" type="text" name="outerf1" class="form-control outer" minlength="3" data-strictly-maxlength="8" required>
-        </div>
-        <div class="mb-3">
-            <label for="outerf2" class="form-label">Outer Field 2</label>
-            <input id="outerf2" type="text" name="outerf2" class="form-control outer" minlength="3" data-strictly-maxlength="8">
-        </div>
+
+    <!-- Example 2: Direct Inputs (Live Validation) -->
+    <div class="example-section">
+        <h2 class="h4">Example 2: Direct Inputs (Live Validation)</h2>
+        <form id="form-direct" class="mb-3">
+            <div class="mb-3">
+                <label for="outerf1" class="form-label">Outer Field 1 (min 3, max 8, required)</label>
+                <input id="outerf1" type="text" name="outerf1" class="form-control outer" minlength="3" data-strictly-maxlength="8" required>
+            </div>
+            <div class="mb-3">
+                <label for="outerf2" class="form-label">Outer Field 2 (min 3, max 8)</label>
+                <input id="outerf2" type="text" name="outerf2" class="form-control outer" minlength="3" data-strictly-maxlength="8">
+            </div>
+        </form>
+        <p><em>Shows live validation with <code>restrict: 'oninput'</code>.</em></p>
     </div>
-    
-    <form class="form-container mt-4 col-md-6 form">
-        <h3>Form Fields</h3>
-        
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input id="name" type="text" name="name" class="form-control" minlength="3" data-strictly-maxlength="8" required>
-        </div>
-        
-        <div class="mb-3">
-            <label for="namenr" class="form-label">Name (Not Required)</label>
-            <input id="namenr" type="text" name="namenr" class="form-control" data-strictly-required="false">
-        </div>
-        
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input id="email" type="email" class="form-control" data-strictly-maxlength="10" name="email" required>
-        </div>
-        
-        <h4>Number & Digits Validation</h4>
-        <div class="mb-3">
-            <label for="number" class="form-label">Number</label>
-            <input id="number" type="text" class="form-control" data-strictly-type="number" name="number" required>
-        </div>
 
-        <div class="mb-3">
-            <label for="integer" class="form-label">Integer</label>
-            <input id="integer" type="text" class="form-control" data-strictly-type="integer" name="integer" required>
-        </div>
-        
-        <div class="mb-3">
-            <label for="digits" class="form-label">Digits</label>
-            <input id="digits" type="text" class="form-control" data-strictly-type="digits" name="digits" required>
-        </div>
-        
-        <h4>Alphanumeric Validation</h4>
-        <div class="mb-3">
-            <label for="alphanum" class="form-label">Alphanumeric</label>
-            <input id="alphanum" type="text" class="form-control" data-strictly-type="alphanum" name="alphanum" required>
-        </div>
-        
-        <div class="mb-3">
-            <label for="alphanumspace" class="form-label">Alphanumeric with Spaces</label>
-            <input id="alphanumspace" type="text" class="form-control" data-strictly-type="alphanumspace" name="alphanumspace" required>
-        </div>
+    <!-- Example 3: Full Form Validation (All Built-in Rules) -->
+    <div class="example-section">
+        <h2 class="h4">Example 3: Full Form Validation (All Built-in Rules)</h2>
+        <form class="form-container form mb-3">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name (min 3, max 8, required)</label>
+                <input id="name" type="text" name="name" class="form-control" minlength="3" data-strictly-maxlength="8" required>
+            </div>
+            <div class="mb-3">
+                <label for="namenr" class="form-label">Name (Not Required)</label>
+                <input id="namenr" type="text" name="namenr" class="form-control" data-strictly-required="false">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email (max 10, required)</label>
+                <input id="email" type="email" class="form-control" data-strictly-maxlength="10" name="email" required>
+            </div>
+            <h4>Number & Digits Validation</h4>
+            <div class="mb-3">
+                <label for="number" class="form-label">Number</label>
+                <input id="number" type="text" class="form-control" data-strictly-type="number" name="number" required>
+            </div>
+            <div class="mb-3">
+                <label for="integer" class="form-label">Integer</label>
+                <input id="integer" type="text" class="form-control" data-strictly-type="integer" name="integer" required>
+            </div>
+            <div class="mb-3">
+                <label for="digits" class="form-label">Digits</label>
+                <input id="digits" type="text" class="form-control" data-strictly-type="digits" name="digits" required>
+            </div>
+            <h4>Alphanumeric Validation</h4>
+            <div class="mb-3">
+                <label for="alphanum" class="form-label">Alphanumeric</label>
+                <input id="alphanum" type="text" class="form-control" data-strictly-type="alphanum" name="alphanum" required>
+            </div>
+            <div class="mb-3">
+                <label for="alphanumspace" class="form-label">Alphanumeric with Spaces</label>
+                <input id="alphanumspace" type="text" class="form-control" data-strictly-type="alphanumspace" name="alphanumspace" required>
+            </div>
+            <div class="mb-3">
+                <label for="alphanumstrict" class="form-label">Alphanumeric Strict</label>
+                <input id="alphanumstrict" type="text" class="form-control" data-strictly-type="alphanumstrict" name="alphanumstrict" required>
+            </div>
+            <h4>URL</h4>
+            <div class="mb-3">
+                <label for="url" class="form-label">URL</label>
+                <input id="url" type="text" class="form-control" data-strictly-type="url" name="url" required>
+            </div>
+            <h4>Date & Time</h4>
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input id="date" type="date" class="form-control" name="date" required>
+            </div>
+            <div class="mb-3">
+                <label for="time" class="form-label">Time</label>
+                <input id="time" type="time" class="form-control" name="time" required>
+            </div>
+            <div class="mb-3">
+                <label for="datetime" class="form-label">Date Time</label>
+                <input id="datetime" type='text' class="form-control" data-strictly-datetime="DD-MM-YYYY HH:mm" name='datetime' required>
+            </div>
+            <h4>Password Validation</h4>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" type="password" class="form-control" data-strictly-password="alpha:caps,alpha:small,num,special:min=1,min=6,max=8" name="password" required>
+            </div>
+            <h4>Length, Range, Word</h4>
+            <div class="mb-3">
+                <label for="length" class="form-label">Length</label>
+                <input id="length" type="text" class="form-control" data-strictly-length="[3,8]" name="length" required>
+            </div>
+            <div class="mb-3">
+                <label for="range" class="form-label">Range</label>
+                <input id="range" type="text" class="form-control" data-strictly-range="[3,8]" name="range" required>
+            </div>
+            <div class="mb-3">
+                <label for="word" class="form-label">Word</label>
+                <input id="word" type="text" class="form-control" data-strictly-words="[3,8]" name="word" required>
+            </div>
+            <div class="mb-3">
+                <label for="characters" class="form-label">Characters</label>
+                <input id="characters" name="characters" class="form-control" data-strictly-characters="[5,8]" required>
+            </div>
+            <h4>Pattern</h4>
+            <div class="mb-3">
+                <label for="pattern" class="form-label">Pattern</label>
+                <input id="pattern" type="text" class="form-control" data-strictly-pattern="^[A-Z][0-9][A-Z0-9]{0,3}$" name="pattern" required>
+            </div>
+            <h4>Checkbox Validation</h4>
+            <div class="mb-3">
+                <label class="form-label">Minimum 2 Checkboxes</label>
+                <div class="form-check">
+                    <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required class="form-check-input" id="mincheck1">
+                    <label class="form-check-label" for="mincheck1">Option 1</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required class="form-check-input" id="mincheck2">
+                    <label class="form-check-label" for="mincheck2">Option 2</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required class="form-check-input" id="mincheck3">
+                    <label class="form-check-label" for="mincheck3">Option 3</label>
+                </div>
+            </div>
+            <h4>Select Validation</h4>
+            <div class="mb-3">
+                <label for="select" class="form-label">Select Multiple (2-3)</label>
+                <select name="select" class="form-control" data-strictly-select="[2,3]" multiple required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <h4>Node & Equal to</h4>
+            <div class="mb-3">
+                <label for="node" class="form-label">Node</label>
+                <input id="node" type="text" class="form-control" data-strictly-maxcharacters="8" name="node" required>
+            </div>
+            <div class="mb-3">
+                <label for="equalto" class="form-label">Equal To</label>
+                <input id="equalto" type="text" class="form-control" data-strictly-equalto="#node" name="equalto" required>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </form>
+        <p><em>Demonstrates all built-in validation rules in a single form.</em></p>
+    </div>
 
-        <div class="mb-3">
-            <label for="alphanumstrict" class="form-label">Alphanumeric Strict</label>
-            <input id="alphanumstrict" type="text" class="form-control" data-strictly-type="alphanumstrict" name="alphanumstrict" required>
-        </div>
+    <!-- Example 4: Default (First Error Only) -->
+    <div class="example-section">
+        <h2 class="h4">Example 4: Default (First Error Only)</h2>
+        <form id="form-default" class="mb-3">
+            <div class="mb-3">
+                <label for="email1" class="form-label">Email (required, must be valid)</label>
+                <input type="email" id="email1" name="email1" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password1" class="form-label">Password (min 6, must have number)</label>
+                <input type="password" id="password1" name="password1" class="form-control" required data-strictly-password="alpha:caps, alpha:small, special:min=1, num, min=6">
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+        <p><em>Only the first error per field is shown at a time.</em></p>
+    </div>
 
-        <h4>URL</h4>
-        <div class="mb-3">
-            <label for="url" class="form-label">URL</label>
-            <input id="url" type="text" class="form-control" data-strictly-type="url" name="url" required>
-        </div>
-        
-        <h4>Date & Time</h4>
-        <div class="mb-3">
-            <label for="date" class="form-label">Date</label>
-            <input id="date" type="date" class="form-control" name="date" required>
-        </div>
-        
-        <div class="mb-3">
-            <label for="time" class="form-label">Time</label>
-            <input id="time" type="time" class="form-control" name="time" required>
-        </div>
+    <!-- Example 5: All Errors Shown (errorReturnType: 'all') -->
+    <div class="example-section">
+        <h2 class="h4">Example 5: All Errors Shown (errorReturnType: 'all')</h2>
+        <form id="form-all" class="mb-3">
+            <div class="mb-3">
+                <label for="email2" class="form-label">Email (required, must be valid)</label>
+                <input type="email" id="email2" name="email2" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password2" class="form-label">Password (min 8, must have number and uppercase)</label>
+                <input type="password" id="password2" name="password2" class="form-control" required data-strictly-password="min=8,num,alpha:caps">
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+        <p><em>All errors for a field are shown, separated by <code>&lt;br&gt;</code>.</em></p>
+    </div>
 
-        <div class="mb-3">
-            <label for="datetime" class="form-label">Date Time</label>
-            <input id="datetime" type='text' class="form-control" data-strictly-datetime="DD-MM-YYYY HH:mm" name='datetime' required>
-        </div>
-        
-        <h4>Password Validation</h4>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input id="password" type="password" class="form-control" data-strictly-password="alpha:caps,alpha:small,num,special:min=1,min=6,max=8" name="password" required>
-        </div>
+    <!-- Example 6: Using validate() API to Get Errors as Array -->
+    <div class="example-section">
+        <h2 class="h4">Example 6: Using validate() API to Get Errors as Array</h2>
+        <form id="form-api" class="mb-3">
+            <div class="mb-3">
+                <label for="username-api" class="form-label">Username (required, alphanum, min 4)</label>
+                <input type="text" id="username-api" name="username" class="form-control" required data-strictly-type="alphanum" minlength="4">
+            </div>
+            <div class="mb-3">
+                <label for="password3" class="form-label">Password (min 6, must have lowercase, number)</label>
+                <input type="password" id="password3" name="password3" class="form-control" required data-strictly-password="min=6,num,alpha:small">
+            </div>
+            <div class="mb-3">
+                <button type="button" id="api-validate-btn" class="btn btn-primary">Validate via API</button>
+            </div>
+            <div id="api-errors" class="alert alert-warning d-none"></div>
+        </form>
+        <p><em>Errors are returned as an array and displayed below the form.</em></p>
+    </div>
 
-        <h4>Length, Range, Word</h4>
-        <div class="mb-3">
-            <label for="length" class="form-label">length</label>
-            <input id="length" type="text" class="form-control" data-strictly-length="[3,8]" name="length" required>
-        </div>
+    <!-- Example 7: Space Validations -->
+    <div class="example-section">
+        <h2 class="h4">Example 7: Space Validations</h2>
+        <form id="form-space" class="mb-3">
+            <div class="mb-3">
+                <label for="username-space" class="form-label">Username (must not start with a space)</label>
+                <input type="text" id="username-space" name="username" class="form-control" data-strictly-initialnospace required>
+            </div>
+            <div class="mb-3">
+                <label for="fullname-space" class="form-label">Full Name (single spaces only between words)</label>
+                <input type="text" id="fullname-space" name="fullname" class="form-control" data-strictly-singlespace required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+        <p><em>Demonstrates <code>data-strictly-initialnospace</code> and <code>data-strictly-singlespace</code> validations. Try entering leading spaces or multiple spaces between words.</em></p>
+    </div>
 
-        <div class="mb-3">
-            <label for="range" class="form-label">Range</label>
-            <input id="range" type="text" class="form-control" data-strictly-range="[3,8]" name="range" required>
-        </div>
+    <!-- Example 8: File Input Validation -->
+    <div class="example-section">
+        <h2 class="h4">Example 8: File Input Validation</h2>
+        <form id="form-file" class="mb-3">
+            <div class="mb-3">
+                <label for="avatar-file" class="form-label">Avatar (PNG/JPG, max 1MB)</label>
+                <input type="file" id="avatar-file" name="avatar" class="form-control" data-strictly-filetype="image/png,.jpg" data-strictly-filesize="1048576" required>
+            </div>
+            <div class="mb-3">
+                <label for="docs-file" class="form-label">Documents (PDF, 1-3 files, max 2MB each)</label>
+                <input type="file" id="docs-file" name="docs" class="form-control" multiple data-strictly-filecount="[1,3]" data-strictly-filetype="application/pdf" data-strictly-filesize="2097152">
+            </div>
+            <div class="mb-3">
+                <button type="button" id="file-validate-btn" class="btn btn-primary">Validate Files</button>
+            </div>
+            <div id="file-errors" class="alert alert-warning d-none"></div>
+        </form>
+        <p><em>Demonstrates file type, size, and count validation for file inputs.</em></p>
+    </div>
 
-        <div class="mb-3">
-            <label for="word" class="form-label">Word</label>
-            <input id="word" type="text" class="form-control" data-strictly-words="[3,8]" name="word" required>
-        </div>
+    <!-- Example 9: Custom Error Placement (Summary at Top) -->
+    <div class="example-section">
+        <h2 class="h4">Example 9: Custom Error Placement (Summary at Top)</h2>
+        <form id="form-summary" class="mb-3">
+            <div id="summary-errors" class="alert alert-warning mb-3" style="min-height:1.5em;"></div>
+            <div class="mb-3">
+                <label for="username7" class="form-label">Username (required, min 4)</label>
+                <input type="text" id="username7" name="username7" class="form-control" required minlength="4">
+            </div>
+            <div class="mb-3">
+                <label for="email7" class="form-label">Email (required, must be valid)</label>
+                <input type="email" id="email7" name="email7" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+        <p><em>All error messages are shown in a summary box at the top, using the <code>errorPlacement</code> callback.</em></p>
+    </div>
 
-        <div>
-	    	<label for="characters">characters</label>
-	    	<input id="characters" name="characters" class="form-control" data-strictly-characters="[5,8]" required>
-    	</div>
+    <!-- Example 10: Form-Level Callbacks (onValidate, onSuccess, onError) -->
+    <div class="example-section">
+        <h2 class="h4">Example 10: Form-Level Callbacks (onValidate, onSuccess, onError)</h2>
+        <form id="form-callbacks" class="mb-3">
+            <div class="mb-3">
+                <label for="username8" class="form-label">Username (required, min 4)</label>
+                <input type="text" id="username8" name="username8" class="form-control" required minlength="4">
+            </div>
+            <div class="mb-3">
+                <label for="email8" class="form-label">Email (required, must be valid)</label>
+                <input type="email" id="email8" name="email8" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div id="callback-status" class="alert alert-info d-none"></div>
+        </form>
+        <p><em>Shows how to use <code>onValidate</code>, <code>onSuccess</code>, and <code>onError</code> callbacks to react to form validation state.</em></p>
+    </div>
 
-        <h4>Pattern</h4>
-        <div class="mb-3">
-            <label for="pattern" class="form-label">Pattern</label>
-            <input id="pattern" type="text" class="form-control" data-strictly-pattern="^[A-Z][0-9][A-Z0-9]{0,3}$" name="pattern" required>
-        </div>
-        
-        <h4>Checkbox Validation</h4>
-        <div class="mb-3">
-            <label for="mincheck" class="form-label">Minimum 2 Checkboxes</label>
-            <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required>
-            <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required>
-            <input type="checkbox" name="mincheck" data-strictly-mincheck="2" required>
-        </div>
-        
-        <h4>Select Validation</h4>
-        <div class="mb-3">
-            <label for="select" class="form-label">Select Multiple (2-3)</label>
-            <select name="select" class="form-control" data-strictly-select="[2,3]" multiple required>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
-        </div>
+    <!-- Example 11: Synchronous Custom Validator (Even Number, API) -->
+    <div class="example-section">
+        <h2 class="h4">Example 11: Synchronous Custom Validator (Even Number, API)</h2>
+        <form id="form-sync" class="mb-3">
+            <div class="mb-3">
+                <label for="evenField-sync" class="form-label">Even Number (must be even)</label>
+                <input type="text" id="evenField-sync" name="evenField" class="form-control" data-strictly-custom="even" required>
+            </div>
+            <div class="mb-3">
+                <button type="button" id="sync-validate-btn" class="btn btn-primary">Validate via API</button>
+            </div>
+            <div id="sync-errors" class="alert alert-warning d-none"></div>
+        </form>
+        <p><em>Uses a synchronous custom validator for even numbers, validated via API.</em></p>
+    </div>
 
-        <h4>Node & Equal to</h4>
-        <div class="mb-3">
-            <label for="node" class="form-label">Node</label>
-            <input id="node" type="text" class="form-control" data-strictly-maxcharacters="8" name="node" required>
-        </div>
+    <!-- Example 12: Asynchronous Custom Validator (Username Availability, API) -->
+    <div class="example-section">
+        <h2 class="h4">Example 12: Asynchronous Custom Validator (Username Availability, API)</h2>
+        <form id="form-async" class="mb-3">
+            <div class="mb-3">
+                <label for="username-async" class="form-label">Username (must not be 'taken')</label>
+                <input type="text" id="username-async" name="username" class="form-control" data-strictly-custom="username-available" required>
+            </div>
+            <div class="mb-3">
+                <button type="button" id="async-validate-btn" class="btn btn-primary">Validate via API</button>
+            </div>
+            <div id="async-errors" class="alert alert-warning d-none"></div>
+        </form>
+        <p><em>Uses an asynchronous custom validator to simulate a remote username check ("taken" is unavailable, 500ms delay).</em></p>
+    </div>
 
-        <div class="mb-3">
-            <label for="equalto" class="form-label">Equal To</label>
-            <input id="equalto" type="text" class="form-control" data-strictly-equalto="#node" name="equalto" required>
-        </div>
-        
-        <button class="btn btn-success">Submit</button>
-    </form>
 </div>
+<script src="strictly.js"></script>
+<script>
+// Example 1: Basic Inputs (API usage)
+const strictlyBasic = new Strictly('#form-basic');
+document.getElementById('subb').addEventListener('click', async (e) => {
+    const result = await strictlyBasic.validate();
+    const errorDiv = document.getElementById('basic-errors');
+    if (result.errors.length === 0) {
+        errorDiv.classList.remove('d-none', 'alert-warning');
+        errorDiv.classList.add('alert-success');
+        errorDiv.innerHTML = '<span>All fields valid!</span>';
+    } else {
+        errorDiv.classList.remove('d-none', 'alert-success');
+        errorDiv.classList.add('alert-warning');
+        errorDiv.innerHTML = result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    }
+});
 
-</body>
-<script type="text/javascript" src="strictly.js"></script>
-<script type='text/javascript'>
-	// document.getElementById('name').focus();
+// Example 2: Direct Inputs (Live Validation)
+let outer = new Strictly('.outer', {restrict: 'oninput'});
 
-	var c = new Strictly('.form', {
-		restrict: 'showerror',
-		errorMessagePosition: 'up',
-		errorCustomClass: 'checking',
-		errorTag: 'div',
-		// initError: false
-	});
+// Example 3: Full Form Validation
+var c = new Strictly('.form', {
+    restrict: 'oninput',
+    errorMessagePosition: 'down',
+    errorCustomClass: 'checking',
+    errorTag: 'div',
+});
 
-	let outer = new Strictly('.outer', {restrict: 'oninput'});
-	console.log(outer);
-	
-	let validVar = new Strictly('.wrap');
-	document.querySelector('#subb').addEventListener('click', (e) => {
-		var d = validVar.validate({formError: true});
-		console.log(d);
-	});
+// Example 4: Default (First Error Only)
+const strictlyDefault = new Strictly('#form-default');
 
-	// setTimeout(() => {
-	//     // Select the .form container
-	// 	const formContainer = document.querySelector('.form');
+// Example 5: All errors shown (errorReturnType: 'all')
+const strictlyAll = new Strictly('#form-all', { errorReturnType: 'all', restrict: 'oninput' });
 
-	// 	// Create a new input element
-	// 	const newInput = document.createElement('input');
+// Example 6: Using validate() API to get errors as array
+const strictlyAPI = new Strictly('#form-api', { errorReturnType: 'all', initError: false });
+document.getElementById('api-validate-btn').addEventListener('click', async function() {
+    const result = await strictlyAPI.validate();
+    const errorDiv = document.getElementById('api-errors');
+    if (result.errors.length === 0) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-warning');
+        errorDiv.classList.add('alert-success');
+        errorDiv.innerHTML = '<span>All fields valid!</span>';
+    } else {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-success');
+        errorDiv.classList.add('alert-warning');
+        errorDiv.innerHTML = result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    }
+});
 
-	// 	// Set attributes for the input element
-	// 	newInput.type = 'text';
-	// 	newInput.name = 'dynamicInput';
-	// 	newInput.placeholder = 'Enter text here...';
-	// 	newInput.setAttribute("maxlength", "6");
-	// 	newInput.required = true;
+// Register a global custom validator for 'even'
+Strictly.registerValidator('even', value => {
+    const n = Number(value);
+    return !isNaN(n) && n % 2 === 0;
+});
+Strictly.registerErrorMessage('even', 'Value must be an even number!');
 
-	// 	// Append the new input to the .form container
-	// 	formContainer.appendChild(newInput);
-	// }, 2000);
+// Attach Strictly to the custom validator form
+const strictlyCustom = new Strictly('#form-custom');
+
+// Example 7: Space Validations
+const strictlySpace = new Strictly('#form-space', { restrict: 'oninput' });
+
+// Example 8: File Input Validation
+const strictlyFile = new Strictly('#form-file');
+document.getElementById('file-validate-btn').addEventListener('click', async function() {
+    const result = await strictlyFile.validate();
+    const errorDiv = document.getElementById('file-errors');
+    if (result.errors.length === 0) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-warning');
+        errorDiv.classList.add('alert-success');
+        errorDiv.innerHTML = '<span>All files valid!</span>';
+    } else {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-success');
+        errorDiv.classList.add('alert-warning');
+        errorDiv.innerHTML = result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    }
+});
+
+// Example 9: Custom Error Placement (Summary at Top)
+const summaryDiv = document.getElementById('summary-errors');
+const strictlySummary = new Strictly('#form-summary', {
+    errorPlacement: (field, errorEl, msg) => {
+        if (errorEl.parentElement && errorEl.parentElement !== summaryDiv) {
+            errorEl.parentElement.removeChild(errorEl);
+        }
+        if (msg) {
+            errorEl.innerHTML = msg;
+            if (!summaryDiv.contains(errorEl)) summaryDiv.appendChild(errorEl);
+        } else {
+            if (summaryDiv.contains(errorEl)) summaryDiv.removeChild(errorEl);
+        }
+    },
+    restrict: 'oninput',
+    errorReturnType: 'all'
+});
+
+// Example 10: Form-Level Callbacks (onValidate, onSuccess, onError)
+const statusDiv = document.getElementById('callback-status');
+const formCallbacks = document.getElementById('form-callbacks');
+const strictlyCallbacks = new Strictly('#form-callbacks', {
+    onValidate: (result) => {
+        statusDiv.classList.remove('d-none');
+        statusDiv.innerHTML =
+          '<b>onValidate:</b> ' + (result.isValid ? '<span class="text-success">Valid</span>' : '<span class="text-danger">Invalid</span>') +
+          '<br>Fields: ' + Object.keys(result.values).join(', ');
+    },
+    onSuccess: (result) => {
+        statusDiv.classList.remove('d-none');
+        statusDiv.innerHTML = '<b>onSuccess:</b> <span class="text-success">Sending via AJAX...</span>';
+        // Example AJAX POST using fetch to httpbin.org for demo
+        // fetch('https://httpbin.org/post', { method: 'POST', body: new FormData(formCallbacks) });
+    },
+    onError: (result) => {
+        statusDiv.classList.remove('d-none');
+        statusDiv.innerHTML = '<b>onError:</b> <span class="text-danger">Form has errors:</span><br>' +
+          result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    },
+    restrict: 'oninput',
+    errorReturnType: 'all'
+});
+
+// Example 11: Synchronous Custom Validator (Even Number, API)
+const strictlySync = new Strictly('#form-sync');
+document.getElementById('sync-validate-btn').addEventListener('click', async function() {
+    const errorDiv = document.getElementById('sync-errors');
+    const result = await strictlySync.validate();
+    if (result.errors.length === 0) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-warning');
+        errorDiv.classList.add('alert-success');
+        errorDiv.innerHTML = '<span>All fields valid!</span>';
+    } else {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-success');
+        errorDiv.classList.add('alert-warning');
+        errorDiv.innerHTML = result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    }
+});
+
+// Example 12: Asynchronous Custom Validator (Username Availability, API)
+Strictly.registerValidator('username-available', async value => {
+    await new Promise(res => setTimeout(res, 500));
+    return value !== 'taken';
+});
+Strictly.registerErrorMessage('username-available', 'Username is already taken!');
+const strictlyAsync = new Strictly('#form-async');
+document.getElementById('async-validate-btn').addEventListener('click', async function() {
+    const errorDiv = document.getElementById('async-errors');
+    const result = await strictlyAsync.validate();
+    if (result.errors.length === 0) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-warning');
+        errorDiv.classList.add('alert-success');
+        errorDiv.innerHTML = '<span>All fields valid!</span>';
+    } else {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-success');
+        errorDiv.classList.add('alert-warning');
+        errorDiv.innerHTML = result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    }
+});
 </script>
-</html>
+</body>
+</html> 

@@ -15,7 +15,19 @@ class Strictly
 	#options;
 	#defaultOptions;
 	#initError = false;
+	#everFocusedFields = new WeakMap();
 	
+	static customValidators = {};
+	static customErrorMessages = {};
+
+	static registerValidator(ruleName, fn) {
+		Strictly.customValidators[ruleName] = fn;
+	}
+
+	static registerErrorMessage(ruleName, msg) {
+		Strictly.customErrorMessages[ruleName] = msg;
+	}
+
 	constructor(target, options = {}) {
 		this.#target = target; // field, form, div
 
@@ -33,6 +45,36 @@ class Strictly
 			errorMessagePosition: 'down', // Allowed values: 'down', 'up', 'custom'
 			errorCustomClass: null, // Depends on errorMessagePosition
 			initError: true, // Show error immediately on input
+			errorReturnType: 'first', // 'first' or 'all'
+			debounce: 0, // Debounce time in ms for live validation (0 = no debounce)
+			/**
+			 * errorPlacement: function(field, errorElement, errorMessage)
+			 * If provided, called whenever an error element is created or updated.
+			 * Allows custom placement or rendering of error messages.
+			 * Example:
+			 *   errorPlacement: (field, errorEl, msg) => {
+			 *     document.querySelector('#my-summary').appendChild(errorEl);
+			 *   }
+			 */
+			errorPlacement: null,
+			/**
+			 * onValidate: function(result)
+			 * Called after every validation (manual or automatic).
+			 * Receives: { isValid, values, errors }
+			 */
+			onValidate: null,
+			/**
+			 * onSuccess: function(result)
+			 * Called if the form is valid after validation.
+			 * Receives: { isValid, values, errors }
+			 */
+			onSuccess: null,
+			/**
+			 * onError: function(result)
+			 * Called if the form is invalid after validation.
+			 * Receives: { isValid, values, errors }
+			 */
+			onError: null
 			// placeholderMask: false,
 			// customValidators: {},
 			// customErrorMessages: {}
@@ -119,7 +161,7 @@ class Strictly
 
 	        target.querySelectorAll('input, textarea, select').forEach((field) => this.#processField(field, "form"));
 
-	        target.addEventListener('submit', (e) => {
+	        target.addEventListener('submit', async (e) => {
 	            e.preventDefault();
 	            
 	            if (!this.#initError) {
@@ -128,8 +170,13 @@ class Strictly
 	                target.querySelectorAll('input, textarea, select').forEach(field => this.#addFieldListeners(field, "form"));
 	            }
 
-	            if (this.#validateForm(e, target)) {
-	            	target.submit();
+	            const result = await this.validate({ formError: true });
+	            if (typeof this.#options.onValidate === 'function') this.#options.onValidate(result);
+	            if (result.isValid) {
+	                if (typeof this.#options.onSuccess === 'function') this.#options.onSuccess(result);
+	                // Do NOT call target.submit();
+	            } else {
+	                if (typeof this.#options.onError === 'function') this.#options.onError(result);
 	            }
 	        }, true);
 	    } else if (['input', 'textarea', 'select'].includes(target.tagName.toLowerCase())) {
@@ -169,14 +216,34 @@ class Strictly
 	}
 
 	#addFieldListeners(field, source = null) {
-	    ['input', 'focus', 'blur'].forEach(event => {
-	        field.addEventListener('input', () => {
-	            let result = this.#validateField(field);
-	            if(source == "direct") {
-	            	// console.log(result, source == 'direct');
-	            }
-	        });
+	    const debounceMs = this.#options.debounce || 0;
+	    if (!field._strictlyDebounceTimer) field._strictlyDebounceTimer = null;
+	    // On focus: mark as ever focused, but do NOT validate
+	    field.addEventListener('focus', () => {
+	        if (!this.#everFocusedFields.get(field)) {
+	            this.#everFocusedFields.set(field, true);
+	        }
 	    });
+	    // On blur: validate as normal (but skip if first focus and no input yet)
+	    field.addEventListener('blur', () => {
+	        if (this.#everFocusedFields.get(field)) {
+	            this.#validateField(field);
+	        }
+	    });
+	    // On input: always validate as normal (including required)
+	    const handler = () => {
+	        this.#validateField(field);
+	    };
+	    const debouncedHandler = (e) => {
+	        if (debounceMs > 0) {
+	            if (field._strictlyDebounceTimer) clearTimeout(field._strictlyDebounceTimer);
+	            field._strictlyDebounceTimer = setTimeout(handler, debounceMs);
+	        } else {
+	            handler();
+	        }
+	    };
+	    field.addEventListener('input', debouncedHandler);
+	    // Only add debouncedHandler to 'input' and 'blur', NOT 'focus'
 	}
 
 	#createErrorElement(field) {
@@ -200,7 +267,12 @@ class Strictly
 		let errorTag = document.createElement(this.#options.errorTag);
 		errorTag.classList.add(this.#options.errorClass);
 		errorTag.setAttribute('id', field.getAttribute('data-strictly-connector'));
-
+		errorTag.setAttribute('role', 'alert');
+		errorTag.setAttribute('aria-live', 'assertive');
+		// If custom error placement callback is provided, let it handle placement
+		if (typeof this.#options.errorPlacement === 'function') {
+			this.#options.errorPlacement(field, errorTag, '');
+		}
 		switch (this.#options.errorMessagePosition) {
 		case 'down':
 			field.insertAdjacentElement('afterend', errorTag);
@@ -222,28 +294,42 @@ class Strictly
 		// error element
 	}
 
-	validate(options = {}) {
+	async validate(options = {}) {
+		// errorReturnType: 'first' | 'all' (from instance options only)
 		let isFormError = options.formError ?? false;
-		let isValid = true;
+		let errorReturnType = this.#options.errorReturnType || 'first';
 		let errors = [];
 		let values = {};
-
-		document.querySelectorAll(this.#target).forEach(target => {
-	        let fields = ['input', 'textarea', 'select'].includes(target.tagName.toLowerCase()) 
-	            ? [target] 
-	            : target.querySelectorAll('input, textarea, select');
-
-	        fields.forEach(field => {
-	            let result = this.#validateField(field, isFormError);
-	            values[field.name] = result.value; // Store field value
-
-	            if (result.error.length > 0) { // ✅ Only push if there are errors
-	                errors.push({ field: field.name, message: result.error });
-	            }
-	        });
-	    });
-
-		return { isValid: errors.length === 0, values, errors };
+		let isValid = true;
+		const targets = document.querySelectorAll(this.#target);
+		// For API/submit, treat all fields as ever focused for this validation pass
+		for (const target of targets) {
+			let fields = ['input', 'textarea', 'select'].includes(target.tagName.toLowerCase())
+				? [target]
+				: target.querySelectorAll('input, textarea, select');
+			for (const field of fields) {
+				this.#everFocusedFields.set(field, true);
+			}
+		}
+		for (const target of targets) {
+			let fields = ['input', 'textarea', 'select'].includes(target.tagName.toLowerCase())
+				? [target]
+				: target.querySelectorAll('input, textarea, select');
+			for (const field of fields) {
+				let result = await this.#validateField(field, isFormError, true);
+				values[field.name] = result.value;
+				if (result.error.length > 0) {
+					let message = (errorReturnType === 'first') ? result.error[0] : result.error;
+					errors.push({ field: field.name, message });
+					isValid = false;
+				}
+			}
+		}
+		const validationResult = { isValid, values, errors };
+		if (typeof this.#options.onValidate === 'function') this.#options.onValidate(validationResult);
+		if (isValid && typeof this.#options.onSuccess === 'function') this.#options.onSuccess(validationResult);
+		if (!isValid && typeof this.#options.onError === 'function') this.#options.onError(validationResult);
+		return validationResult;
 	}
 
 	#validateForm(e, target) {
@@ -265,24 +351,26 @@ class Strictly
 		return isValid;
 	}
 
-	#validateField(field, isValidator = true) {
+	async #validateField(field, isValidator = true, forceShowError = false) {
 		let isValid = true;
 		let error = [];
 
+		// Only suppress required error if this is the first focus and not in force mode
+		const skipRequired = !this.#everFocusedFields.get(field) && !forceShowError;
 		if ((field.hasAttribute('required') || field.hasAttribute('data-strictly-required')) && (field.getAttribute('data-strictly-required') !== "false") && !field.value.trim()) {
 			let fieldLabel = field.getAttribute('aria-label') || field.name || 'This field';
-
-			if (field.type === 'email') {
-		        error.push(`${fieldLabel} is required. Please enter a valid email address.`);
-		    } else if (field.type === 'password') {
-		        error.push(`${fieldLabel} is required. Please enter a password.`);
-		    } else if (field.type === 'checkbox' || field.type === 'radio') {
-		        error.push(`Please select at least one option for ${fieldLabel}.`);
-		    } else {
-		        error.push(`${fieldLabel} is required.`);
-		    }
-
-			isValid = false;
+			if (!skipRequired) {
+				if (field.type === 'email') {
+					error.push(`${fieldLabel} is required.`);
+				} else if (field.type === 'password') {
+					error.push(`${fieldLabel} is required.`);
+				} else if (field.type === 'checkbox' || field.type === 'radio') {
+					error.push(`Please select at least one option for ${fieldLabel}.`);
+				} else {
+					error.push(`${fieldLabel} is required.`);
+				}
+				isValid = false;
+			}
 		}
 
 		if (field.getAttribute('data-strictly-required') == "false" && !field.value.trim()) {
@@ -1093,6 +1181,90 @@ class Strictly
 		    }
 		}
 
+		if (field.hasAttribute('data-strictly-custom')) {
+			const rule = field.getAttribute('data-strictly-custom');
+			if (Strictly.customValidators[rule]) {
+				let result = Strictly.customValidators[rule](field.value, field, this.#options);
+				if (result instanceof Promise) result = await result;
+				if (typeof result === 'object' && result !== null && 'valid' in result) {
+					if (this.#options.restrict === 'oninput' && typeof result.corrected === 'string' && result.corrected !== field.value) {
+						field.value = result.corrected;
+					}
+					if (!result.valid) {
+						error.push(Strictly.customErrorMessages[rule] || `${field.name} failed custom validation.`);
+						isValid = false;
+					}
+				} else if (!result) {
+					error.push(Strictly.customErrorMessages[rule] || `${field.name} failed custom validation.`);
+					isValid = false;
+				}
+			}
+		}
+
+		if (field.hasAttribute('data-strictly-initialnospace')) {
+            if (/^\s/.test(field.value)) {
+                if (this.#options.restrict === 'oninput') {
+                    field.value = field.value.replace(/^\s+/, '');
+                }
+                let fieldLabel = field.getAttribute('aria-label') || field.name || 'This field';
+                error.push(`${fieldLabel} must not start with a space.`);
+                isValid = false;
+            }
+        }
+
+        if (field.hasAttribute('data-strictly-singlespace')) {
+            if (/ {2,}/.test(field.value)) {
+                if (this.#options.restrict === 'oninput') {
+                    field.value = field.value.replace(/ {2,}/g, ' ');
+                }
+                let fieldLabel = field.getAttribute('aria-label') || field.name || 'This field';
+                error.push(`${fieldLabel} must have only single spaces between words.`);
+                isValid = false;
+            }
+        }
+
+		if (field.type === 'file') {
+            const files = field.files;
+            const fieldLabel = field.getAttribute('aria-label') || field.name || 'File';
+            // File count
+            if (field.hasAttribute('data-strictly-filecount')) {
+                const countAttr = field.getAttribute('data-strictly-filecount');
+                const match = countAttr.match(/\[\s*(\d+)\s*,\s*(\d+)\s*\]/);
+                if (match) {
+                    const min = parseInt(match[1], 10);
+                    const max = parseInt(match[2], 10);
+                    if (files.length < min || files.length > max) {
+                        error.push(`${fieldLabel} must have between ${min} and ${max} file(s).`);
+                        isValid = false;
+                    }
+                }
+            }
+            // File type
+            if (field.hasAttribute('data-strictly-filetype')) {
+                const allowed = field.getAttribute('data-strictly-filetype').split(',').map(s => s.trim().toLowerCase());
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const type = file.type.toLowerCase();
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (!allowed.includes(type) && !allowed.includes('.' + ext)) {
+                        error.push(`${fieldLabel}: File '${file.name}' must be of type: ${allowed.join(', ')}`);
+                        isValid = false;
+                    }
+                }
+            }
+            // File size
+            if (field.hasAttribute('data-strictly-filesize')) {
+                const maxSize = parseInt(field.getAttribute('data-strictly-filesize'), 10);
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.size > maxSize) {
+                        error.push(`${fieldLabel}: File '${file.name}' exceeds max size of ${maxSize} bytes.`);
+                        isValid = false;
+                    }
+                }
+            }
+        }
+
 		if (isValidator) {
 			if (!isValid) this.#showError(field, error);
 			else this.#clearError(field);
@@ -1108,11 +1280,11 @@ class Strictly
 		return { isValid, value, error };
 	}
 
-	#showError(field, message)
-	{
+	#showError(field, message) {
 		this.#clearError(field);
 		field.classList.remove(this.#options.fieldSuccessClass);
 		field.classList.add(this.#options.fieldErrorClass);
+		let errorReturnType = this.#options.errorReturnType || 'first';
 
 	    let customMessage = field.getAttribute('data-strictly-message');
 	    if (customMessage) {
@@ -1125,8 +1297,26 @@ class Strictly
 		let errorTag = document.getElementById(errorId);
 		if (errorTag) {
 			errorTag.classList.add("filled");
-			errorTag.innerHTML = Array.isArray(message) ? message.join("<br>") : message;
+			let msgHtml = '';
+			if (Array.isArray(message)) {
+                if (errorReturnType === 'all') {
+                    msgHtml = message.join("<br>");
+                } else {
+                    msgHtml = message[0];
+                }
+            } else {
+                msgHtml = message;
+            }
+			// If custom error placement callback is provided, let it handle rendering
+			if (typeof this.#options.errorPlacement === 'function') {
+				this.#options.errorPlacement(field, errorTag, msgHtml);
+			} else {
+				errorTag.innerHTML = msgHtml;
+			}
 		}
+		// ARIA attributes for accessibility
+		field.setAttribute('aria-invalid', 'true');
+		field.setAttribute('aria-describedby', errorId);
 	}
 
 	#clearError(field)
@@ -1144,5 +1334,8 @@ class Strictly
 	    }
 
 		field.classList.add(this.#options.fieldSuccessClass);
+		// Remove ARIA attributes
+		field.removeAttribute('aria-invalid');
+		field.removeAttribute('aria-describedby');
 	}
 }
