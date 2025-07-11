@@ -1,6 +1,6 @@
 {
   "name": "strictlyjs",
-  "version": "1.0.1",
+  "version": "2.0.1",
   "description": "Strictly.js is a lightweight JavaScript library designed to simplify",
   "main": "strictly.js",
   "scripts": {
