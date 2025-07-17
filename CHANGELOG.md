@@ -21,7 +21,7 @@
 ### Improved
 - Required error messages are now only shown after the first focus, input, or blur, or on submit/API call. This improves UX by not showing errors on initial focus.
 
-## [Unreleased] - 2024-06-09
+## [2.0.2] - 2025-07-17
 ### JavaScript
 - **Robust support for multiple custom validators per field:**
   - `strictly.js` fully supports specifying multiple custom validators on a single field using the `data-strictly-custom` attribute, separated by commas (e.g., `data-strictly-custom="minLength=5,alphanumeric"`).
