@@ -1182,26 +1182,37 @@ class Strictly
 		}
 
 		if (field.hasAttribute('data-strictly-custom')) {
-			const rule = field.getAttribute('data-strictly-custom');
-			if (Strictly.customValidators[rule]) {
-				let result = Strictly.customValidators[rule](field.value, field, this.#options);
-				if (result instanceof Promise) result = await result;
-				if (typeof result === 'object' && result !== null && 'valid' in result) {
-					if (this.#options.restrict === 'oninput' && typeof result.corrected === 'string' && result.corrected !== field.value) {
-						field.value = result.corrected;
-					}
-					if (!result.valid) {
-						error.push(Strictly.customErrorMessages[rule] || `${field.name} failed custom validation.`);
-						isValid = false;
-					}
-				} else if (!result) {
-					error.push(Strictly.customErrorMessages[rule] || `${field.name} failed custom validation.`);
-					isValid = false;
-				}
-			}
-		}
+            // Support multiple custom validators, each optionally with a parameter (e.g., minLength=5)
+            const rulesRaw = field.getAttribute('data-strictly-custom');
+            const rules = rulesRaw.split(',').map(r => r.trim()).filter(Boolean);
+            for (const ruleEntry of rules) {
+                let ruleName = ruleEntry;
+                let param = undefined;
+                if (ruleEntry.includes('=')) {
+                    const idx = ruleEntry.indexOf('=');
+                    ruleName = ruleEntry.slice(0, idx).trim();
+                    param = ruleEntry.slice(idx + 1).trim();
+                }
+                if (Strictly.customValidators[ruleName]) {
+                    let result = Strictly.customValidators[ruleName](field.value, field, this.#options, param);
+                    if (result instanceof Promise) result = await result;
+                    if (typeof result === 'object' && result !== null && 'valid' in result) {
+                        if (this.#options.restrict === 'oninput' && typeof result.corrected === 'string' && result.corrected !== field.value) {
+                            field.value = result.corrected;
+                        }
+                        if (!result.valid) {
+                            error.push(Strictly.customErrorMessages[ruleName] || `${field.name} failed custom validation.`);
+                            isValid = false;
+                        }
+                    } else if (!result) {
+                        error.push(Strictly.customErrorMessages[ruleName] || `${field.name} failed custom validation.`);
+                        isValid = false;
+                    }
+                }
+            }
+        }
 
-		if (field.hasAttribute('data-strictly-initialnospace')) {
+        if (field.hasAttribute('data-strictly-initialnospace')) {
             if (/^\s/.test(field.value)) {
                 if (this.#options.restrict === 'oninput') {
                     field.value = field.value.replace(/^\s+/, '');
@@ -1338,4 +1349,9 @@ class Strictly
 		field.removeAttribute('aria-invalid');
 		field.removeAttribute('aria-describedby');
 	}
+}
+
+// Attach Strictly to window for browser global usage
+if (typeof window !== 'undefined') {
+  window.Strictly = Strictly;
 }

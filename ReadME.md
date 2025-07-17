@@ -157,12 +157,21 @@ const strictly = new Strictly('#my-form', {
 | `data-strictly-minselect` | Min select options | `<select multiple data-strictly-minselect="2">` |
 | `data-strictly-maxselect` | Max select options | `<select multiple data-strictly-maxselect="5">` |
 | `data-strictly-select="[min,max]"` | Select range | `<select multiple data-strictly-select="[1,3]">` |
-| `data-strictly-custom` | Custom validator | `<input data-strictly-custom="even">` |
+| `data-strictly-custom` | Custom validator (supports multiple, comma-separated) | `<input data-strictly-custom="even">`, `<input data-strictly-custom="minLength=5,alphanumeric">` |
 | `data-strictly-initialnospace` | Must not start with a space | `<input data-strictly-initialnospace>` |
 | `data-strictly-singlespace` | Only single spaces allowed between words | `<input data-strictly-singlespace>` |
 | `data-strictly-filetype` | Allowed file types/extensions (comma-separated, e.g. image/png,.jpg) | `<input type="file" data-strictly-filetype="image/png,.jpg">` |
 | `data-strictly-filesize` | Max file size in bytes | `<input type="file" data-strictly-filesize="1048576">` |
 | `data-strictly-filecount` | Min/max number of files (multi) | `<input type="file" multiple data-strictly-filecount="[1,3]">` |
+
+---
+
+## Features
+- **Multiple custom validators per field:**
+  - Use `data-strictly-custom` with a comma-separated list to apply multiple custom validators to a single field.
+  - Supports both parameterized (e.g., `minLength=5`) and non-parameterized (e.g., `alphanumeric`) custom rules.
+  - Each validator is registered via `Strictly.registerValidator` and can have a custom error message via `Strictly.registerErrorMessage`.
+  - All specified custom validators are executed in order, and errors are collected and displayed according to your configuration.
 
 ---
 
@@ -265,6 +274,17 @@ const strictly = new Strictly('#form', {
     }
   }
 });
+```
+
+### 12. Multiple custom validators per field
+```js
+Strictly.registerValidator('minLength', (value, field, options, param) => value.length >= Number(param));
+Strictly.registerErrorMessage('minLength', 'Must be at least the specified length.');
+Strictly.registerValidator('alphanumeric', value => /^[a-zA-Z0-9]+$/.test(value));
+Strictly.registerErrorMessage('alphanumeric', 'Only alphanumeric characters allowed.');
+
+// HTML:
+// <input type="text" data-strictly-custom="minLength=5,alphanumeric" required>
 ```
 
 ---

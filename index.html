@@ -351,6 +351,26 @@
         <p><em>Uses an asynchronous custom validator to simulate a remote username check ("taken" is unavailable, 500ms delay).</em></p>
     </div>
 
+    <!-- Example 13: Multiple Custom Validators (Single Field, Multiple Rules) -->
+    <div class="example-section">
+        <h2 class="h4">Example 13: Multiple Custom Validators (Single Field, Multiple Rules)</h2>
+        <form id="form-multicustom" class="mb-3">
+            <div class="mb-3">
+                <label for="username-multi" class="form-label">Username (min 5 chars, alphanumeric)</label>
+                <input type="text" id="username-multi" name="usernameMulti" class="form-control" data-strictly-custom="minLength=5,alphanumeric" required>
+            </div>
+            <div class="mb-3">
+                <label for="password-multi" class="form-label">Password (min 8 chars, at least 1 number, 1 uppercase, 1 special)</label>
+                <input type="password" id="password-multi" name="passwordMulti" class="form-control" data-strictly-custom="minLength=8,hasNumber,hasUppercase,hasSpecial" required>
+            </div>
+            <div class="mb-3">
+                <button type="button" id="multi-validate-btn" class="btn btn-primary">Validate</button>
+            </div>
+            <div id="multi-errors" class="alert alert-warning d-none"></div>
+        </form>
+        <p><em>Demonstrates multiple custom validators per field, including parameterized and non-parameterized rules.</em></p>
+    </div>
+
 </div>
 <script src="strictly.js"></script>
 <script>
@@ -411,6 +431,32 @@ Strictly.registerValidator('even', value => {
     return !isNaN(n) && n % 2 === 0;
 });
 Strictly.registerErrorMessage('even', 'Value must be an even number!');
+
+// Register custom validators for Example 13
+Strictly.registerValidator('minLength', (value, field, options, param) => {
+    return value.length >= Number(param);
+});
+Strictly.registerErrorMessage('minLength', 'Must be at least the specified length.');
+
+Strictly.registerValidator('alphanumeric', (value) => {
+    return /^[a-zA-Z0-9]+$/.test(value);
+});
+Strictly.registerErrorMessage('alphanumeric', 'Only alphanumeric characters allowed.');
+
+Strictly.registerValidator('hasNumber', (value) => {
+    return /\d/.test(value);
+});
+Strictly.registerErrorMessage('hasNumber', 'Must contain at least one number.');
+
+Strictly.registerValidator('hasUppercase', (value) => {
+    return /[A-Z]/.test(value);
+});
+Strictly.registerErrorMessage('hasUppercase', 'Must contain at least one uppercase letter.');
+
+Strictly.registerValidator('hasSpecial', (value) => {
+    return /[^a-zA-Z0-9]/.test(value);
+});
+Strictly.registerErrorMessage('hasSpecial', 'Must contain at least one special character.');
 
 // Attach Strictly to the custom validator form
 const strictlyCustom = new Strictly('#form-custom');
@@ -507,6 +553,24 @@ const strictlyAsync = new Strictly('#form-async');
 document.getElementById('async-validate-btn').addEventListener('click', async function() {
     const errorDiv = document.getElementById('async-errors');
     const result = await strictlyAsync.validate();
+    if (result.errors.length === 0) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-warning');
+        errorDiv.classList.add('alert-success');
+        errorDiv.innerHTML = '<span>All fields valid!</span>';
+    } else {
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.remove('alert-success');
+        errorDiv.classList.add('alert-warning');
+        errorDiv.innerHTML = result.errors.map(e => `<b>${e.field}:</b> ${Array.isArray(e.message) ? e.message.join('<br>') : e.message}`).join('<br>');
+    }
+});
+
+// Attach Strictly to the new form
+const strictlyMultiCustom = new Strictly('#form-multicustom');
+document.getElementById('multi-validate-btn').addEventListener('click', async function() {
+    const errorDiv = document.getElementById('multi-errors');
+    const result = await strictlyMultiCustom.validate();
     if (result.errors.length === 0) {
         errorDiv.classList.remove('d-none');
         errorDiv.classList.remove('alert-warning');
